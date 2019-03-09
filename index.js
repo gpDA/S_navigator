@@ -1,83 +1,81 @@
-// var $boxOne = $('.box:nth-child(1)'),
-//   $boxTwo = $('.box:nth-child(2)'),
-//   $boxThree = $('.box:nth-child(3)');
+// select all DOM elements with classname point
+const points = document.querySelectorAll('.point');
+// get # of elements in the list
+const points_length = points.length
 
-// var boxOne = new TimelineMax(),
-//   boxTwo = new TimelineMax(),
-//   boxThree = new TimelineMax();
+// iteration through each elements
+points.forEach(point => point.addEventListener('click', function(e){
+// get the index number of element (e.g. out of 4 elements // if the selected ('clikced') element is 1st, 2nd, 3rd ??) 
+// array index starts from 0 ... so + 1
+const getIndex = [].indexOf.call(points, point) + 1
 
-// boxOne.to($boxOne, 0.6, {
-//   opacity: 0.25,
-//   scale: 1,
-//   ease: Back.easeOut
-// }).to($boxOne, 0.6, {
-//   rotation: 4,
-//   ease: Back.easeOut
-// }, 2);
+// NESTED FUNCTION
+// pass 4 arguments
+// points_length == line 4
+// getIndex == line 10
+// points  == line 2
+processiveBar(e, points_length, getIndex, points);
+}));
 
-// boxTwo.to($boxTwo, 0.6, {
-//   opacity: 0.5,
-//   scale: 1,
-//   ease: Back.easeOut
-// }, 0.6).to($boxTwo, 0.6, {
-//   rotation: -4,
-//   ease: Back.easeOut
-// }, 1.8);
+// FUNCTION LOGIC
+function processiveBar(e, points_length, getIndex, points){
 
-// boxThree.to($boxThree, 0.6, {
-//   opacity: 1,
-//   scale: 1,
-//   ease: Back.easeOut
-// }, 1.2);
-
-/**
- * Point Animation
- */
-$('.point').on('click', function(e) {
-  var getTotalPoints = $('.point').length,
-    getIndex = $(this).index(),
-    getCompleteIndex = $('.point--active').index();
-
-  TweenMax.to($('.bar__fill'), 0.6, {
-    width: (getIndex - 1) / (getTotalPoints - 1) * 100 + '%'
-  });
-
-  if (getIndex => getCompleteIndex) {
-    $('.point--active').addClass('point--complete').removeClass('point--active');
-
-    $(this).addClass('point--active');
-    $(this).prevAll().addClass('point--complete');
-    $(this).nextAll().removeClass('point--complete');
-  }
+const bar_fill = document.querySelector('.bar__fill');
+// filling out progress bar logic
+TweenMax.to(bar_fill, 0.6, {
+    width: (getIndex - 1) / (points_length - 1) * 100 + '%'
 });
+// update point--complete and point--active
+// TAKING CARE OF step by step SELECTION
+if(getIndex => getCompleteIndex){
+    
+    points.forEach(point => {
+        
+        if(point.classList.contains('point--active')){
+            point.classList.add('point--complete');
+            point.classList.remove('point--active');
+            
+        }
+    })
+}
+e.target.classList.add('point--active');
 
-/*
-  Demo Purposes
-*/
-var progressAnimation = function() {
-  var getTotalPoints = $('.point').length,
-    getIndex = Math.floor(Math.random() * 4) + 1,
-    getCompleteIndex = $('.point--active').index();
+// update point--complete and point--active
+// TAKING CARE OF step skipping SELECTION (for exampe) a user clicks 3rd element while we are currently at 1st element)
 
-  TweenMax.to($('.bar__fill'), 0.6, {
-    width: (getIndex - 1) / (getTotalPoints - 1) * 100 + '%'
-  });
+// get Elements before current selected elements
+function getPreviousSiblings(el) {
+    var siblings = [];
+    
+    while (el = el.previousSibling){
+        if(el.tagName == "DIV")
+            siblings.push(el);
+    }
+    // console.log(siblings);
+    siblings.forEach(sibling => {
+        if(sibling.classList.contains('point')){
+            sibling.classList.add('point--complete');
+        }
+    })
+}
+// get Elements after current selected elements
+function getNextSiblings(el) {
+    var siblings = [];
+    
+    while (el = el.nextSibling){
+        if(el.tagName == "DIV")
+            siblings.push(el);
+    }
+    siblings.forEach(sibling => {
+        if(sibling.classList.contains('point')){
+            sibling.classList.remove('point--complete');
+        }
+    })
+}    
 
-  if (getIndex => getCompleteIndex) {
-    $('.point--active').addClass('point--complete').removeClass('point--active');
+getPreviousSiblings(e.target);
+getNextSiblings(e.target);
 
-    $('.point:nth-child(' + (getIndex + 1) + ')').addClass('point--active');
-    $('.point:nth-child(' + (getIndex + 1) + ')').prevAll().addClass('point--complete');
-    $('.point:nth-child(' + (getIndex + 1) + ')').nextAll().removeClass('point--complete');
-  }
-};
 
-var animateProgress = setInterval(progressAnimation, 1200);
 
-$(document).hover(function() {
-  clearInterval(animateProgress)
-});
-
-// $('.radius-toggle').on('click', function() {
-//   $('body').toggleClass('show-radius')
-// });
+}
