@@ -4,10 +4,22 @@ const points = document.querySelectorAll('.point');
 const points_length = points.length
 
 // iteration through each elements
+
+var navigation_index = {
+    1: 'https://www.google.com/',
+    2: 'https://gpda.github.io/',
+    3: 'https://www.amazon.com/',
+    4: 'https://github.com/gpDA'
+}
 points.forEach(point => point.addEventListener('click', function(e){
 // get the index number of element (e.g. out of 4 elements // if the selected ('clikced') element is 1st, 2nd, 3rd ??) 
 // array index starts from 0 ... so + 1
 const getIndex = [].indexOf.call(points, point) + 1
+
+console.log(navigation_index[getIndex]);
+// e.preventDefault();
+
+// window.open(navigation_index[getIndex],"_blank");
 
 // NESTED FUNCTION
 // pass 4 arguments
@@ -22,7 +34,7 @@ function processiveBar(e, points_length, getIndex, points){
 
 const bar_fill = document.querySelector('.bar__fill');
 // filling out progress bar logic
-TweenMax.to(bar_fill, 0.6, {
+TweenMax.to(bar_fill, 1, {
     width: (getIndex - 1) / (points_length - 1) * 100 + '%'
 });
 // update point--complete and point--active
